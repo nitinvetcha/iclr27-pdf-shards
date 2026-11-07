@@ -1,0 +1,4 @@
+pdfs/
+*.zip
+*.part
+__pycache__/
