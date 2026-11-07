@@ -2,150 +2,151 @@
 # Format: shard number, then ONE word for the person (no spaces), e.g.   7  alice
 # The person then runs:  python fetch.py alice   and gets all their shards, one after another.
 # Leave a line with just the number for a shard that is not assigned yet.
+# Assigned 7 Nov 2026 in turn (round robin), so everyone's first shards are the highest-priority papers.
 1 server   # Nitin's server; do not assign
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100
-101
-102
-103
-104
-105
-106
-107
-108
-109
-110
-111
-112
-113
-114
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125
-126
-127
-128
-129
-130
-131
-132
-133
-134
-135
-136
-137
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147
+2 aditya
+3 ashwin
+4 mamta
+5 sandesh
+6 pragnya
+7 arnav
+8 aditya
+9 ashwin
+10 mamta
+11 sandesh
+12 pragnya
+13 arnav
+14 aditya
+15 ashwin
+16 mamta
+17 sandesh
+18 pragnya
+19 arnav
+20 aditya
+21 ashwin
+22 mamta
+23 sandesh
+24 pragnya
+25 arnav
+26 aditya
+27 ashwin
+28 mamta
+29 sandesh
+30 pragnya
+31 arnav
+32 aditya
+33 ashwin
+34 mamta
+35 sandesh
+36 pragnya
+37 arnav
+38 aditya
+39 ashwin
+40 mamta
+41 sandesh
+42 pragnya
+43 arnav
+44 aditya
+45 ashwin
+46 mamta
+47 sandesh
+48 pragnya
+49 arnav
+50 aditya
+51 ashwin
+52 mamta
+53 sandesh
+54 pragnya
+55 arnav
+56 aditya
+57 ashwin
+58 mamta
+59 sandesh
+60 pragnya
+61 arnav
+62 aditya
+63 ashwin
+64 mamta
+65 sandesh
+66 pragnya
+67 arnav
+68 aditya
+69 ashwin
+70 mamta
+71 sandesh
+72 pragnya
+73 arnav
+74 aditya
+75 ashwin
+76 mamta
+77 sandesh
+78 pragnya
+79 arnav
+80 aditya
+81 ashwin
+82 mamta
+83 sandesh
+84 pragnya
+85 arnav
+86 aditya
+87 ashwin
+88 mamta
+89 sandesh
+90 pragnya
+91 arnav
+92 aditya
+93 ashwin
+94 mamta
+95 sandesh
+96 pragnya
+97 arnav
+98 aditya
+99 ashwin
+100 mamta
+101 sandesh
+102 pragnya
+103 arnav
+104 aditya
+105 ashwin
+106 mamta
+107 sandesh
+108 pragnya
+109 arnav
+110 aditya
+111 ashwin
+112 mamta
+113 sandesh
+114 pragnya
+115 arnav
+116 aditya
+117 ashwin
+118 mamta
+119 sandesh
+120 pragnya
+121 arnav
+122 aditya
+123 ashwin
+124 mamta
+125 sandesh
+126 pragnya
+127 arnav
+128 aditya
+129 ashwin
+130 mamta
+131 sandesh
+132 pragnya
+133 arnav
+134 aditya
+135 ashwin
+136 mamta
+137 sandesh
+138 pragnya
+139 arnav
+140 aditya
+141 ashwin
+142 mamta
+143 sandesh
+144 pragnya
+145 arnav
+146 server   # Nitin's server
+147 server   # Nitin's server
