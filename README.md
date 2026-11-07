@@ -10,12 +10,13 @@ Each person runs one shard with their own OpenReview account and sends back one 
    git clone https://github.com/nitinvetcha/iclr27-pdf-shards.git
    cd iclr27-pdf-shards
    ```
-2. Run the shard number Nitin gave you, for example shard 7:
+2. Run it with **your name as it appears in [`assignments.txt`](assignments.txt)**, for example:
    ```
-   python fetch.py 7
+   python fetch.py alice
    ```
+   It fetches every shard assigned to you, one after another. (To run a single shard instead: `python fetch.py 7`.)
    It asks for your OpenReview e-mail and password. The password is used only to log in. It is never saved or sent anywhere else.
-3. When it finishes, it writes **`shard_007.zip`** in this folder. Send that file to Nitin.
+3. Each finished shard becomes a zip in this folder, for example **`shard_007.zip`**. Send those files to Nitin.
 
 While it runs, you see a progress line like this:
 ```
@@ -33,10 +34,13 @@ While it runs, you see a progress line like this:
 - On Windows, use `py fetch.py 7` if `python` is not found. On a Mac or Linux, `python3 fetch.py 7`.
 - To run without typing the password each time, set `OPENREVIEW_USERNAME` and `OPENREVIEW_PASSWORD` in your shell first.
 
-## Shards
+## Who does which shard: `assignments.txt`
 
-- **Shard 1** is fetched by Nitin's server. Please do not take it.
-- Please **take the shard number Nitin gives you**, so two people do not download the same papers.
+- **Nitin assigns shards** by editing [`assignments.txt`](assignments.txt) on GitHub: open the file, click the pencil icon, write a
+  name after the shard number (for example `7 alice`), and click "Commit changes". One word per name, no spaces.
+- Give one person several shards by writing their name on several lines.
+- The script fetches the latest `assignments.txt` each time it starts, so new assignments take effect without re-cloning.
+- **Shard 1** is fetched by Nitin's server. The server also skips every shard that has a name next to it.
 - Each shard file in `shards/` is just a list of OpenReview submission ids, one per line.
 
 ## Please keep this private

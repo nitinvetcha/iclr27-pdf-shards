@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Fetch one shard of ICLR 2027 submission PDFs from OpenReview with your own OpenReview account.
 
-    python fetch.py 7          fetch shard 7 (resumes if you stop and restart it)
+    python fetch.py alice      fetch every shard Nitin assigned to "alice" in assignments.txt, one after another
+    python fetch.py 7          fetch shard 7 only (resumes if you stop and restart it)
     python fetch.py --list     show all shards and how many PDFs you already have
     python fetch.py --test     log in and download one PDF, to check that everything works
 
@@ -9,7 +10,7 @@ Needs Python 3.8 or newer and nothing else (standard library only). Your passwor
 OpenReview allows about 25 PDF downloads per hour per account, so a 100-paper shard takes about 4-5 hours. Leave it running;
 it waits by itself when OpenReview says "too many requests". When the shard is finished it writes shard_XXX.zip: send that file to Nitin.
 """
-import os, sys, json, time, shutil, zipfile, hashlib, getpass, datetime, urllib.request, urllib.error
+import os, sys, json, time, shutil, subprocess, zipfile, hashlib, getpass, datetime, urllib.request, urllib.error
 
 API = "https://api2.openreview.net"
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -27,6 +28,26 @@ def shard_ids(n):
 def all_shards():
     d = os.path.join(HERE, "shards")
     return sorted(int(f[6:9]) for f in os.listdir(d) if f.startswith("shard_") and f.endswith(".txt"))
+
+
+def update_repo():
+    """pull the latest assignments.txt (Nitin edits it on GitHub); silent if git is missing or offline"""
+    if os.path.isdir(os.path.join(HERE, ".git")):
+        try: subprocess.run(["git", "-C", HERE, "pull", "-q", "--ff-only"], timeout=60, capture_output=True)
+        except Exception: pass
+
+
+def assignments():
+    a = {}
+    p = os.path.join(HERE, "assignments.txt")
+    for l in open(p):
+        t = l.split("#")[0].split()
+        if len(t) >= 2 and t[0].isdigit(): a[int(t[0])] = t[1].lower()
+    return a
+
+
+def my_shards(name):
+    return sorted(n for n, who in assignments().items() if who == name.lower())
 
 
 def out_dir(n):
@@ -170,9 +191,14 @@ def main():
             print(f"{n:5d}  {len(ids):6d}  {h:9d}")
         return
     if a[0] == "--test": run(all_shards()[-1], test=True); return
-    try: n = int(a[0])
-    except ValueError: sys.exit("Usage: python fetch.py <shard number>   (for example: python fetch.py 7)")
-    try: run(n)
+    update_repo()
+    if a[0].isdigit(): todo = [int(a[0])]
+    else:
+        todo = my_shards(a[0])
+        if not todo: sys.exit(f"No shards are assigned to '{a[0]}' in assignments.txt yet. Ask Nitin to add your name, then run this again.")
+        print(f"Shards assigned to {a[0]}: {', '.join(map(str, todo))}")
+    try:
+        for n in todo: run(n)
     except KeyboardInterrupt: print("\nStopped. Run the same command again to continue.")
 
 
