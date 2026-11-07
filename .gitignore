@@ -2,3 +2,4 @@ pdfs/
 *.zip
 *.part
 __pycache__/
+done/

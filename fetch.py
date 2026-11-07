@@ -74,19 +74,33 @@ def note_status(d, i, msg):
     with open(os.path.join(d, "_status.tsv"), "a") as f: f.write(f"{i}\t{msg}\n")
 
 
+CRED = {}
+
+
 def login():
-    user = os.environ.get("OPENREVIEW_USERNAME") or input("OpenReview login e-mail: ").strip()
-    pw = os.environ.get("OPENREVIEW_PASSWORD") or getpass.getpass("OpenReview password (not shown, not saved): ")
-    req = urllib.request.Request(f"{API}/login", data=json.dumps({"id": user, "password": pw}).encode(),
-                                 headers={"Content-Type": "application/json", "User-Agent": UA}, method="POST")
-    try:
-        with urllib.request.urlopen(req, timeout=60) as r: tok = json.load(r)["token"]
-    except urllib.error.HTTPError as e:
-        sys.exit(f"Login failed (HTTP {e.code}). Check the e-mail and password you use on openreview.net.")
-    except Exception as e:
-        sys.exit(f"Could not reach OpenReview: {e}")
-    print("Logged in to OpenReview.")
-    return tok
+    """asks for the e-mail and password once per run and keeps them in memory only (never on disk), so the hourly re-login and the
+    next shard do not stop and wait for typing in an unattended tmux window"""
+    first = not CRED
+    if first:
+        CRED["id"] = os.environ.get("OPENREVIEW_USERNAME") or input("OpenReview login e-mail: ").strip()
+        CRED["password"] = os.environ.get("OPENREVIEW_PASSWORD") or getpass.getpass("OpenReview password (not shown, not saved): ")
+    req = lambda: urllib.request.Request(f"{API}/login", data=json.dumps(CRED).encode(),
+                                         headers={"Content-Type": "application/json", "User-Agent": UA}, method="POST")
+    wait = 60
+    while True:
+        try:
+            with urllib.request.urlopen(req(), timeout=60) as r: tok = json.load(r)["token"]
+            if first: print("Logged in to OpenReview.")
+            return tok
+        except urllib.error.HTTPError as e:
+            if first and e.code in (400, 401, 403, 404):
+                CRED.clear(); sys.exit(f"Login failed (HTTP {e.code}). Check the e-mail and password you use on openreview.net.")
+            msg = f"login: HTTP {e.code}"
+        except Exception as e:
+            if first: sys.exit(f"Could not reach OpenReview: {e}")
+            msg = "login: no connection"
+        sys.stdout.write(f"\r{msg}, trying again in {wait // 60} min".ljust(60)); sys.stdout.flush()
+        time.sleep(wait); wait = min(wait * 2, 1800)
 
 
 def download(i, tok):
@@ -139,10 +153,18 @@ def pack(n, ids, d):
                 zf.write(p, f"shard_{n:03d}/{i}.pdf")
             else: rows.append(f"{i}\t{st.get(i, 'not fetched')}\t0\t-")
         zf.writestr(f"shard_{n:03d}/manifest.tsv", "id\tstatus\tbytes\tsha256\n" + "\n".join(rows) + "\n")
-    print(f"\nWrote {z} ({os.path.getsize(z) / 1e6:.0f} MB). Please send this file to Nitin.")
+    k = sum(1 for r in rows if "\tok\t" in r)
+    with zipfile.ZipFile(z) as zf: good = zf.testzip() is None and len(zf.namelist()) == k + 1
+    if not good: sys.exit(f"\n{z} did not verify. Nothing was deleted; run the same command again.")
+    shutil.rmtree(d)                      # the PDFs are now inside the verified zip; this frees the same space again
+    os.makedirs(os.path.join(HERE, "done"), exist_ok=True)
+    open(os.path.join(HERE, "done", f"shard_{n:03d}.done"), "w").write(f"{k} PDFs, {os.path.getsize(z)} bytes, {time.ctime()}\n")
+    print(f"\nShard {n} finished: {k} PDFs in {z} ({os.path.getsize(z) / 1e6:.0f} MB). Please send this file to Nitin.")
 
 
 def run(n, test=False):
+    if not test and os.path.exists(os.path.join(HERE, "done", f"shard_{n:03d}.done")):
+        print(f"Shard {n} is already finished (shard_{n:03d}.zip). Skipping it."); return
     ids = shard_ids(n); d = out_dir(n); st = read_status(d)
     todo = [i for i in ids if not have_pdf(os.path.join(d, f"{i}.pdf")) and i not in st]
     if test: todo = todo[:1]

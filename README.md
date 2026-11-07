@@ -23,6 +23,24 @@ While it runs, you see a progress line like this:
 [#########.....................] 31/100 (31%)  PDFs 30  unavailable 1  ETA ~2h52m  pacing: next try in 1m48s
 ```
 
+## Where the files go
+
+- While a shard runs, its PDFs are saved in `iclr27-pdf-shards/pdfs/shard_007/`.
+- When the shard is complete, the script packs them into **`iclr27-pdf-shards/shard_007.zip`**, checks the zip, and then deletes the
+  loose PDFs (they are all inside the zip). It then starts your next shard by itself.
+- **Send Nitin the `shard_XXX.zip` files** (for example, by Google Drive). You can send each one as soon as it appears; no need to wait
+  for all of them. Once Nitin confirms receipt, you may delete the zip.
+- About 300-500 MB per zip.
+
+## Running it in tmux (so it keeps going when you close the terminal)
+
+```
+tmux new -s iclr
+python fetch.py yourname        # type the e-mail and password once
+```
+Press **Ctrl+b, then d** to leave it running in the background. Come back later with `tmux attach -t iclr` to see the progress line.
+You type the password only once per run: the script keeps it in memory (never on disk) for re-logins and for the next shards.
+
 ## Good to know
 
 - **It is slow on purpose.** OpenReview allows about 25 PDFs per hour per account, so one shard takes **about 4–5 hours**. Just leave it running.
