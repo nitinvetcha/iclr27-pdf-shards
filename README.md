@@ -1,6 +1,6 @@
 # ICLR 2027 PDF shards
 
-This repo helps us download ICLR 2027 submission PDFs from OpenReview. The papers are split into **147 small shards of 100 papers each**.
+This repo helps us download ICLR 2027 submission PDFs from OpenReview. The papers are split into **small shards of 100 papers each** (re-cut 8 Nov 2026: 135 shards; shards 1-20 are Nitin's server, the rest are assigned by name in `assignments.txt`, most important first, with no overlap).
 Each person runs one shard with their own OpenReview account and sends back one zip file. All further processing happens on Nitin's server.
 
 ## How to run a shard (3 steps)
